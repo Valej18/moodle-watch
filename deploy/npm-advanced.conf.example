@@ -1,5 +1,10 @@
 # Onglet Advanced d'un hote Nginx Proxy Manager.
 #
+# Deux gardes, et deux seulement : le pare-feu de la machine (seul le proxy peut
+# atteindre le port) et le segment secret de l'URL. moodle-watch ne valide aucun
+# en-tete partage, donc ne pas en injecter un : un garde que personne ne verifie
+# ressemble a une protection sans en etre une.
+#
 # NE PAS inclure conf.d/include/proxy.conf ici : il ajoute un second proxy_pass
 # dans le bloc, ce qui fait echouer TOUTE la configuration nginx, certificat
 # compris, et pas seulement cet hote.
@@ -23,7 +28,6 @@ location /LE-SEGMENT-SECRET/mcp {
     # MOODLE_WATCH_HOSTS, sinon : 421.
     proxy_set_header Host moodle.example.org;
     proxy_set_header Connection "";
-    proxy_set_header X-MOODLE-WATCH-Key VOTRE-CLE;
 
     # Sans ca, le segment secret finit en clair dans le journal d'acces, pour
     # des mois.

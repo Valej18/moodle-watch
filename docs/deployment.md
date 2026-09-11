@@ -6,7 +6,7 @@ the firewall, never by the bind. Templates are in [`deploy/`](../deploy/).
 ```
 client
   └─ HTTPS   your.host/<secret segment>/mcp
-       └─ reverse proxy — injects a shared header, access_log off, force SSL
+       └─ reverse proxy — access_log off, force SSL
             └─ private tunnel
                  └─ socket unit (FreeBind) :3040
                       └─ systemd-socket-proxyd → 127.0.0.1:3041
@@ -36,6 +36,16 @@ segment sits in plain text in the access log for months.
 as two assignments. Use `EnvironmentFile`, or a mirror path without spaces.
 `systemd-analyze verify` catches it, if you run it.
 
+## What actually guards this
+
+Two things, and it is worth being precise because a third would be decorative.
+The **firewall** means only your proxy can reach the port at all, and the
+**secret URL segment** means only holders of the full URL can speak to the
+endpoint. moodle-watch validates no shared header, so do not inject one: a guard
+nobody checks looks like protection without being any.
+
+The segment is therefore a password. Treat it as one.
+
 ## Firewall
 
 If your host's firewall policy is default-permissive, opening a port needs both
@@ -54,8 +64,7 @@ Each layer is tested from the machine that can legitimately reach it. A timeout
 from the wrong machine is the firewall working, not a fault.
 
 Reading the codes on layer 4: `405` or `406` on a `GET` is correct, the endpoint
-wants a `POST`. `404` means a wrong segment or a missing proxy host. `403` means
-a mismatched shared key. `421` means the public name is not in
+wants a `POST`. `404` means a wrong segment or a missing proxy host. `421` means the public name is not in
 `MOODLE_WATCH_HOSTS`.
 
 ## Revoking access

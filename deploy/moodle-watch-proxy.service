@@ -1,0 +1,20 @@
+# Le relais entre la socket et le serveur.
+#
+# PIEGE, paye a l'installation : une unite `.socket` declenche
+# `<nom>.service`, PAS `<nom>@.service`. Un gabarit templaté donne
+# « Socket service not loaded, refusing » et le socket reste inactif. Service
+# simple, donc, et un seul processus pour toutes les connexions.
+
+[Unit]
+Description=moodle-watch socket proxy
+Requires=moodle-watch-proxy.socket
+After=moodle-watch-proxy.socket
+
+[Service]
+Type=notify
+ExecStart=/usr/lib/systemd/systemd-socket-proxyd 127.0.0.1:3041
+DynamicUser=yes
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
