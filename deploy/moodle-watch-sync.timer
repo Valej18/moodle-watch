@@ -1,0 +1,13 @@
+# Persistent=true rattrape un run manque au demarrage suivant. C'est ce qui
+# distingue un timer d'une ligne de cron, et c'est pour ca qu'on l'utilise.
+
+[Unit]
+Description=moodle-watch periodic sync
+
+[Timer]
+OnCalendar=*-*-* 06,13,20:00
+Persistent=true
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,49 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "moodle-watch"
+version = "0.1.0"
+description = "Watch a Moodle course space over time: what is new, what changed, and what you already handled. An MCP server built on moodle-dl."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "GPL-3.0-or-later"
+keywords = ["moodle", "mcp", "model-context-protocol", "lms", "students"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Education",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Education",
+]
+
+dependencies = [
+    # Epinglee volontairement. Les classes de moodle-dl utilisees par engine.py
+    # sont internes a une application en ligne de commande : elles n'offrent
+    # aucune garantie de stabilite. `moodle-watch doctor` verifie a chaque fois
+    # que les points d'appel existent encore, et engine.py est le seul fichier a
+    # changer si l'amont bouge.
+    "moodle-dl==2.3.13",
+    "mcp>=2.1",
+]
+
+[project.optional-dependencies]
+# Extraction de texte. Separee parce qu'un deploiement qui ne fait que de la
+# veille n'a besoin ni de PyMuPDF ni de python-docx.
+documents = ["pymupdf>=1.24", "python-docx>=1.1"]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+moodle-watch = "moodle_watch.cli:main"
+moodle-watch-server = "moodle_watch.server:main"
+
+[project.urls]
+Homepage = "https://github.com/Valej18/moodle-watch"
+Issues = "https://github.com/Valej18/moodle-watch/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["moodle_watch"]
+
+[tool.hatch.build]
+include = ["moodle_watch/**/*.py", "moodle_watch/schema.sql"]

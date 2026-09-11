@@ -1,0 +1,7 @@
+[Unit]
+Description=moodle-watch socket proxy
+Requires=moodle-watch.service
+After=moodle-watch.service
+
+[Service]
+ExecStart=/lib/systemd/systemd-socket-proxyd 127.0.0.1:3041

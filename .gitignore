@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+dist/
+build/
+*.egg-info/
+
+# Jamais versionnes : ils portent le jeton Moodle en clair, ou l'etat local.
+config.json
+moodle_state.db
+moodle_watch.db
+*.db-wal
+*.db-shm
+*.sync.log
+policy.toml

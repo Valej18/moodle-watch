@@ -1,0 +1,36 @@
+# Le serveur MCP. N'ecoute que sur la boucle locale : l'exposition est tenue par
+# le proxy, jamais par le bind.
+#
+# Installer sous /etc/systemd/system/ et remplacer les %%VALEURS%%.
+#
+# PIEGE, paye une fois : un chemin contenant une espace dans un Environment=
+# est coupe au premier blanc et lu comme deux affectations. Pas d'espace dans
+# MOODLE_WATCH_MIRROR, ou alors passer par EnvironmentFile. `systemd-analyze
+# verify` le signale, a condition de le lancer.
+
+[Unit]
+Description=moodle-watch MCP server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=%%USER%%
+Group=%%GROUP%%
+EnvironmentFile=/etc/moodle-watch/env
+ExecStart=%%VENV%%/bin/moodle-watch-server --http
+Restart=on-failure
+RestartSec=10
+
+# Le service ne doit toucher que son miroir et son registre.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=%%MIRROR%%
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+[Install]
+WantedBy=multi-user.target

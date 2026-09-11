@@ -1,0 +1,19 @@
+# Relais depuis l'IP du tunnel vers la boucle locale, pour un serveur qui
+# n'ecoute que sur 127.0.0.1.
+#
+# FreeBind=true permet de se lier a l'adresse du tunnel AVANT que le tunnel ne
+# soit monte. Sans lui, l'unite echoue au demarrage de la machine et ne se
+# releve pas. Pas de After=network.target, delibere : la socket doit exister tot.
+#
+# Unite SYSTEME et non utilisateur : elle ne doit pas dependre d'une session
+# graphique ouverte.
+
+[Unit]
+Description=moodle-watch socket relay
+
+[Socket]
+ListenStream=%%TAILSCALE_IP%%:3040
+FreeBind=true
+
+[Install]
+WantedBy=sockets.target

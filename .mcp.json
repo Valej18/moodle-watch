@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "moodle-watch": {
+      "command": ".venv/bin/python",
+      "args": ["-m", "moodle_watch.server"],
+      "env": {
+        "MOODLE_WATCH_MIRROR": "${MOODLE_WATCH_MIRROR}"
+      }
+    }
+  }
+}

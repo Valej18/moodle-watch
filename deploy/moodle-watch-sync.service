@@ -1,0 +1,12 @@
+[Unit]
+Description=moodle-watch one sync cycle
+
+[Service]
+Type=oneshot
+User=%%USER%%
+EnvironmentFile=/etc/moodle-watch/env
+ExecStart=%%VENV%%/bin/moodle-watch run
+# Le jeton expire, et il se renouvelle a la main. Un serveur qui meurt en
+# silence la-dessus est un piege : on previent, et on dit quoi faire.
+# Code 2 = token_expired, voir cli.py.
+ExecStopPost=%%DEPLOY%%/notify-failure.sh

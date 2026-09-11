@@ -1,0 +1,33 @@
+# Onglet Advanced d'un hote Nginx Proxy Manager.
+#
+# NE PAS inclure conf.d/include/proxy.conf ici : il ajoute un second proxy_pass
+# dans le bloc, ce qui fait echouer TOUTE la configuration nginx, certificat
+# compris, et pas seulement cet hote.
+
+# La racine ne sert rien. Sans cette ligne, l'hote annonce publiquement qu'il
+# existe quelque chose a cette adresse.
+location / {
+    return 404;
+}
+
+# Le segment secret EST le mot de passe. Il ne s'ecrit nulle part ailleurs.
+location /LE-SEGMENT-SECRET/mcp {
+    proxy_pass http://100.x.y.z:3040/mcp;
+
+    # Les trois lignes sans lesquelles le streamable HTTP ne fonctionne pas.
+    proxy_http_version 1.1;
+    proxy_buffering off;
+    proxy_read_timeout 3600s;
+
+    # Le serveur valide cet en-tete. Il doit porter le nom declare dans
+    # MOODLE_WATCH_HOSTS, sinon : 421.
+    proxy_set_header Host moodle.example.org;
+    proxy_set_header Connection "";
+    proxy_set_header X-MOODLE-WATCH-Key VOTRE-CLE;
+
+    # Sans ca, le segment secret finit en clair dans le journal d'acces, pour
+    # des mois.
+    access_log off;
+
+    add_header X-Robots-Tag "noindex, nofollow, noarchive" always;
+}
